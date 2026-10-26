@@ -1,0 +1,10 @@
+id: AM240M450600ZS
+category: displays
+size: "2.4"
+panel: amoled
+resolution: 450x600
+interface: [spi, mcu, mipi]
+driver: RM690B0
+touch: null
+outline: 38.72 x 51.56 mm
+active_area: 36.72 x 48.96 mm
