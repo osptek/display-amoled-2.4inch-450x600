@@ -1,0 +1,177 @@
+menu "AMOLED RM690B0 (AM240M450600ZS) Configuration"
+
+    config LCD_PIN_RST
+        int "LCD RESET GPIO (J3 pin 6, active low)"
+        range -1 54
+        default 5
+        help
+            Dev board J3 pin 6 LCD_RST = GPIO5.
+            Set to -1 to rely on RC power-on reset + DCS SWRESET (0x01).
+
+    config LCD_PIN_BLK_BOOST_EN
+        int "Backlight boost (SY7200) EN GPIO, driven low"
+        range -1 54
+        default 20
+        help
+            Dev board BOOST_BLK EN = GPIO20 (pulled up by 10K). An AMOLED has no backlight and
+            LEDA/LEDK are not connected on the adapter, so this boost is switched off.
+            Set to -1 to leave it untouched.
+
+    config LCD_PIN_ENA
+        int "PMIC ENA GPIO (J2 pin 1)"
+        range -1 54
+        default 23
+        help
+            GPIO driving ENA of the BV6821 AMOLED PMIC through a jumper wire (J2 pin 1).
+            ENA must go high before the driver IC starts sending SWIRE pulses.
+
+    config LCD_PIN_IC_OK
+        int "IC_OK input GPIO (J2 pin 2)"
+        range -1 54
+        default 22
+        help
+            Optional. GPIO connected to IC_OK (TE1 of the RM690B0, J2 pin 2), only read and logged.
+            Set to -1 if not connected.
+
+    config LCD_MIPI_LANE_MBPS
+        int "MIPI DSI lane bit rate (Mbps)"
+        range 400 1500
+        default 500
+        help
+            The datasheet specifies 500Mbps on a single data lane.
+
+    config LCD_DPI_CLK_KHZ
+        int "DPI pixel clock (kHz)"
+        default 18750
+        help
+            (450+2+40+10) * (600+2+10+10) * 60Hz = ~18.73MHz
+
+    choice LCD_DSI_VIDEO_MODE
+        prompt "DSI video mode type"
+        default LCD_DSI_BURST
+        help
+            ESP-IDF uses burst mode. The vendor test (SSD2828) used non-burst with sync pulses.
+        config LCD_DSI_BURST
+            bool "Burst with sync pulses (ESP-IDF default)"
+        config LCD_DSI_NON_BURST_PULSES
+            bool "Non-burst with sync pulses (vendor SSD2828 setting)"
+        config LCD_DSI_NON_BURST_EVENTS
+            bool "Non-burst with sync events"
+    endchoice
+
+    config LCD_DPI_DISABLE_LP
+        bool "Keep HS during blanking (disable LP in video mode)"
+        default n
+
+    config LCD_SHOW_COLOR_BAR
+        bool "Show DSI built-in color bar for 2s before LVGL starts"
+        default n
+        help
+            WARNING: switching the DSI host pattern on/off restarts the video stream out of phase with
+            the frame buffer DMA. Afterwards the image is shifted by a random number of bytes
+            (colors rotated, picture shifted right, wrap-around). Only use it to check the link.
+
+    config LCD_FB_BYTE_LAG
+        int "Frame buffer byte-lag compensation (0 = off)"
+        range 0 64
+        default 0
+        help
+            The DPI stream was observed to lag the frame buffer by a few bytes (colors rotated,
+            image shifted right, last pixels of the frame wrap to the top-left).
+            When > 0, LVGL writes directly into the frame buffer shifted by this many bytes.
+            Find the right value with the display lab.
+
+    config LCD_COLOR_ORDER_FIX
+        bool "Rotate RGB bytes of each pixel (only needed when HBP leaves a 1-byte phase)"
+        depends on LCD_FB_BYTE_LAG = 0
+        default n
+        help
+            Rotates each RGB888 pixel before it is copied to the frame buffer.
+            Needed with HBP 40 (R->B, G->R, B->G without it); must be OFF with HBP 26.
+            See the timing comment in lcd_rm690b0.c.
+
+    config LCD_SHOW_GEOMETRY_TEST
+        bool "Show border/grid geometry pattern before LVGL starts"
+        default n
+        help
+            Left column RED, right column BLUE, top row GREEN, bottom row YELLOW,
+            gray grid every 50px, white grid every 100px.
+
+    config LCD_GEOMETRY_TEST_SECONDS
+        int "Geometry pattern display time (s)"
+        default 5
+        depends on LCD_SHOW_GEOMETRY_TEST
+
+    config LCD_DISPLAY_LAB
+        bool "Run display lab (cycles video mode / byte-lag experiments, logs LAB step N)"
+        default n
+        help
+            Every step restarts the video stream, which itself shifts the image by a random amount.
+
+    config LCD_LAB_STEP_SECONDS
+        int "Seconds per lab step"
+        default 8
+        depends on LCD_DISPLAY_LAB
+
+    config LCD_SHOW_COLOR_TEST
+        bool "Show full-screen R/G/B/White/Gray/Black (1.5s each) before LVGL starts"
+        default n
+
+endmenu
+
+menu "Demo"
+    choice APP_DEMO
+        prompt "UI shown after start-up"
+        default APP_DEMO_WIDGETS
+        config APP_DEMO_TOUCH_TEST
+            bool "Touch test (white grid, touched cell lights up)"
+        config APP_DEMO_WIDGETS
+            bool "LVGL lv_demo_widgets"
+    endchoice
+endmenu
+
+menu "Touch GTW623 Configuration"
+
+    config CTP_ENABLE
+        bool "Enable GTW623 touch"
+        default y
+
+    if CTP_ENABLE
+    config CTP_PIN_SDA
+        int "I2C SDA GPIO (J3 pin 26 CTP_SDA)"
+        default 7
+    config CTP_PIN_SCL
+        int "I2C SCL GPIO (J3 pin 27 CTP_SCL)"
+        default 8
+    config CTP_PIN_INT
+        int "INT GPIO (J3 pin 25 CTP_INT), -1 = poll"
+        range -1 54
+        default 21
+    config CTP_PIN_RST
+        int "RESET GPIO (J3 pin 28 CTP_RST), -1 = none"
+        range -1 54
+        default 6
+    config CTP_I2C_ADDR
+        hex "I2C 7-bit address"
+        default 0x2C
+    config CTP_BOOT_DELAY_MS
+        int "Wait after touch reset release (ms)"
+        default 200
+    config CTP_I2C_FREQ_HZ
+        int "I2C clock (Hz)"
+        default 400000
+    config CTP_SWAP_XY
+        bool "Swap X/Y"
+        default n
+    config CTP_MIRROR_X
+        bool "Mirror X"
+        default n
+    config CTP_MIRROR_Y
+        bool "Mirror Y"
+        default n
+    config CTP_DEBUG_LOG
+        bool "Log every touch point"
+        default n
+    endif
+
+endmenu
