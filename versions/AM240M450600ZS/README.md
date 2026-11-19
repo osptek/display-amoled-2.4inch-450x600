@@ -44,6 +44,8 @@
 | ---- | ---- |
 | 规格文档 | [`AM240M450600ZS.pdf`](./datasheets/AM240M450600ZS.pdf) |
 | CAD 图纸 | [`AM240M450600ZS.dwg`](./cad/AM240M450600ZS.dwg) |
+| 转接板资料 | [`AM240M450600ZS转接板V1.2(1).pdf`](./adapter/AM240M450600ZS%E8%BD%AC%E6%8E%A5%E6%9D%BFV1.2%281%29.pdf) |
+| 转接板资料 | [`AM240M450600ZS转接板V1.2.step`](./adapter/AM240M450600ZS%E8%BD%AC%E6%8E%A5%E6%9D%BFV1.2.step) |
 
 ## 仓库结构
 
@@ -56,7 +58,8 @@ display-amoled-2.4inch-450x600/ # 仓库根（导航见 ../../README.md，示例
         ├── osptek.yml
         ├── images/
         ├── datasheets/       # 产品规格书 + 驱动/触摸 IC 数据手册
-        └── cad/              # 外形/盖板 CAD
+        ├── cad/              # 外形/盖板 CAD
+        └── adapter/          # 转接板资料 + 转接板图片
 ```
 
 ## 购买链接

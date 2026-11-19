@@ -44,6 +44,8 @@
 | ---- | ---- |
 | Datasheet | [`AM240M450600ZS.pdf`](./datasheets/AM240M450600ZS.pdf) |
 | CAD file | [`AM240M450600ZS.dwg`](./cad/AM240M450600ZS.dwg) |
+| Adapter materials | [`AM240M450600ZS转接板V1.2(1).pdf`](./adapter/AM240M450600ZS%E8%BD%AC%E6%8E%A5%E6%9D%BFV1.2%281%29.pdf) |
+| Adapter materials | [`AM240M450600ZS转接板V1.2.step`](./adapter/AM240M450600ZS%E8%BD%AC%E6%8E%A5%E6%9D%BFV1.2.step) |
 
 ## Repository layout
 
@@ -56,7 +58,8 @@ display-amoled-2.4inch-450x600/ # repo root (nav: ../../README_EN.md; sample pro
         ├── osptek.yml
         ├── images/
         ├── datasheets/       # product datasheet + driver/touch IC datasheets
-        └── cad/              # outline/cover CAD
+        ├── cad/              # outline/cover CAD
+        └── adapter/          # adapter board materials + photos
 ```
 
 ## Buy
