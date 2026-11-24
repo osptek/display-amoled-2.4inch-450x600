@@ -44,6 +44,7 @@
 | ---- | ---- |
 | Datasheet | [`AM240M450600ZS.pdf`](./datasheets/AM240M450600ZS.pdf) |
 | CAD file | [`AM240M450600ZS.dwg`](./cad/AM240M450600ZS.dwg) |
+| Adapter materials | [`未标题-1.png`](./adapter/%E6%9C%AA%E6%A0%87%E9%A2%98-1.png) |
 | Adapter materials | [`AM240M450600ZS转接板V1.2(1).pdf`](./adapter/AM240M450600ZS%E8%BD%AC%E6%8E%A5%E6%9D%BFV1.2%281%29.pdf) |
 | Adapter materials | [`AM240M450600ZS转接板V1.2.step`](./adapter/AM240M450600ZS%E8%BD%AC%E6%8E%A5%E6%9D%BFV1.2.step) |
 
